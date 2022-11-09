@@ -7,7 +7,15 @@ import { getError } from './store/errors'
 // import * as actions from './store/task/actions'
 // import { taskCompleted, titleChanged, taskDeleted } from './store/task'
 import configureStore from './store/store'
-import { completeTask, titleChanged, taskDeleted, getTasks, loadTasks, getTasksLoadingStatus } from './store/task'
+import {
+  completeTask,
+  titleChanged,
+  taskDeleted,
+  getTasks,
+  loadTasks,
+  getTasksLoadingStatus,
+  taskCreated,
+} from './store/task'
 
 const store = configureStore()
 
@@ -37,7 +45,6 @@ const App = (params) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-
     //без селекторов
     // dispatch(getTasks())
     dispatch(loadTasks())
@@ -49,7 +56,7 @@ const App = (params) => {
     // store.subscribe(() => {
     //   setState(store.getState())
     // })
-  }, [])
+  }, [dispatch])
 
   // const completeTask = (taskId) => {
   //   // store.dispatch({ type: 'task/completed', payload: { id: taskId } })
@@ -73,6 +80,10 @@ const App = (params) => {
     // store.dispatch(taskDeleted(taskId))
   }
 
+  const createTask = (taskId) => {
+    dispatch(taskCreated(taskId))
+  }
+
   if (isLoading) {
     return <h1>Loading...</h1>
   }
@@ -83,6 +94,7 @@ const App = (params) => {
 
   return (
     <>
+      <button onClick={() => dispatch(createTask())}>Create task</button>
       <h1>App</h1>
       <ul>
         {state.map((el) => (

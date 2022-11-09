@@ -30,6 +30,14 @@ const taskSlice = createSlice({
       state.entities = action.payload
       state.isLoading = false
     },
+    create(state, action) {
+      console.log('action', action)
+      console.log('state.entities', state.entities)
+      state.entities.push({
+        title: action.payload.title,
+        completed: false,
+      })
+    },
     update(state, action) {
       // const elementIndex = state.findIndex((el) => el.id === action.payload.id)
       const elementIndex = state.entities.findIndex(
@@ -59,7 +67,8 @@ const taskSlice = createSlice({
 })
 
 const { actions, reducer: taskReducer } = taskSlice
-const { update, remove, received, taskRequested, taskRequestFailed } = actions
+const { update, create, remove, received, taskRequested, taskRequestFailed } =
+  actions
 
 // const taskRequested = createAction('task/requested')
 // const taskRequestFailed = createAction('task/requestFailed')
@@ -69,6 +78,19 @@ export const loadTasks = () => async (dispatch) => {
   try {
     const data = await todoService.fetch()
     dispatch(received(data))
+  } catch (error) {
+    // без редьюсера error (error.js)
+    // dispatch(taskRequestFailed(error.message))
+    dispatch(taskRequestFailed())
+    dispatch(setError(error))
+  }
+}
+
+export const createTask = () => async (dispatch) => {
+  dispatch(taskRequested())
+  try {
+    const data = await todoService.post()
+    dispatch(create(data))
   } catch (error) {
     // без редьюсера error (error.js)
     // dispatch(taskRequestFailed(error.message))
@@ -105,6 +127,14 @@ export function taskDeleted(id) {
   //     type: TASK_DELETED,
   //     payload: { id },
   //   }
+}
+
+export function taskCreated(id) {
+  return create({
+    userId: id,
+    title: 'New task',
+    completed: false,
+  })
 }
 
 export const getTasks = () => (state) => state.tasks.entities
