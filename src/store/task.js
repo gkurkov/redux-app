@@ -31,12 +31,7 @@ const taskSlice = createSlice({
       state.isLoading = false
     },
     create(state, action) {
-      console.log('action', action)
-      console.log('state.entities', state.entities)
-      state.entities.push({
-        title: action.payload.title,
-        completed: false,
-      })
+      state.entities.push(action.payload)
     },
     update(state, action) {
       // const elementIndex = state.findIndex((el) => el.id === action.payload.id)
@@ -86,10 +81,11 @@ export const loadTasks = () => async (dispatch) => {
   }
 }
 
-export const createTask = () => async (dispatch) => {
+export const createTask = (payload) => async (dispatch) => {
   dispatch(taskRequested())
   try {
-    const data = await todoService.post()
+    const data = await todoService.create(payload)
+    dispatch(taskRequestFailed())
     dispatch(create(data))
   } catch (error) {
     // без редьюсера error (error.js)
@@ -127,14 +123,6 @@ export function taskDeleted(id) {
   //     type: TASK_DELETED,
   //     payload: { id },
   //   }
-}
-
-export function taskCreated(id) {
-  return create({
-    userId: id,
-    title: 'New task',
-    completed: false,
-  })
 }
 
 export const getTasks = () => (state) => state.tasks.entities

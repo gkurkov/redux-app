@@ -12,14 +12,8 @@ const todoService = {
     })
     return data
   },
-  create: async () => {
-    const { data } = await httpService.post(todosEndpoint, {
-      params: {
-        userId: 1,
-        title: 'New task',
-        completed: false,
-      },
-    })
+  create: async (payload) => {
+    const { data } = await httpService.post(todosEndpoint, payload)
     console.log('data', data)
     return data
   },
